@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2020 Mikhail Knyazhev <markus621@gmail.com>.
- * All rights reserved. Use of this source code is governed by a BSD-style
- * license that can be found in the LICENSE file.
- */
-
 package schema
 
 import (
@@ -13,29 +7,35 @@ import (
 	"github.com/pkg/errors"
 )
 
+//nolint: golint
 var (
 	ErrPoolNotFound = errors.New("pool not found")
 )
 
+//nolint: golint
 const (
 	MySQLDialect  = "mysql"
 	SQLiteDialect = "sqlite"
 )
 
 type (
+	//ConfigInterface interface of configs
 	ConfigInterface interface {
 		List() []ItemInterface
 	}
+	//ItemInterface config item interface
 	ItemInterface interface {
 		GetName() string
 		GetDSN() string
 		Setup(SetupInterface)
 	}
+	//SetupInterface connections setup interface
 	SetupInterface interface {
 		SetMaxIdleConns(int)
 		SetMaxOpenConns(int)
 		SetConnMaxLifetime(time.Duration)
 	}
+	//Connector interface of connection
 	Connector interface {
 		Dialect() string
 		Pool(string) (*sql.DB, error)

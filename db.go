@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2020 Mikhail Knyazhev <markus621@gmail.com>.
- * All rights reserved. Use of this source code is governed by a BSD-style
- * license that can be found in the LICENSE file.
- */
-
 package orm
 
 import (
@@ -12,16 +6,19 @@ import (
 )
 
 type (
+	//DB connection storage
 	DB struct {
 		conn schema.Connector
 		plug *Plugins
 	}
+	//Plugins storage
 	Plugins struct {
 		Logger  plugins.Logger
 		Metrics plugins.Metrics
 	}
 )
 
+//NewDB init database connections
 func NewDB(c schema.Connector, p *Plugins) *DB {
 	plug := &Plugins{
 		Logger:  plugins.StdOutLog,
@@ -41,6 +38,7 @@ func NewDB(c schema.Connector, p *Plugins) *DB {
 	}
 }
 
+//Pool getting pool connections by name
 func (d *DB) Pool(name string) StmtInterface {
 	return newStmt(name, d.conn, d.plug)
 }

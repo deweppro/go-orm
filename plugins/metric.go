@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2020 Mikhail Knyazhev <markus621@gmail.com>.
- * All rights reserved. Use of this source code is governed by a BSD-style
- * license that can be found in the LICENSE file.
- */
-
 package plugins
 
 import (
@@ -14,20 +8,25 @@ type (
 	metric struct {
 		metrics MetricWriter
 	}
+	//Metrics interface
 	Metrics interface {
 		ExecutionTime(name string, call func())
 	}
+	//MetricWriter interface
 	MetricWriter interface {
 		Metric(name string, time time.Duration)
 	}
 )
 
+//StdOutMetric simple stdout metrig writer
 var StdOutMetric = NewMetric(StdOutWriter)
 
-func NewMetric(m MetricWriter) *metric {
+//NewMetric init new metric
+func NewMetric(m MetricWriter) Metrics {
 	return &metric{metrics: m}
 }
 
+//ExecutionTime calculating the execution time
 func (m *metric) ExecutionTime(name string, call func()) {
 	if m.metrics == nil {
 		call()

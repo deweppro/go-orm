@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2020 Mikhail Knyazhev <markus621@gmail.com>.
- * All rights reserved. Use of this source code is governed by a BSD-style
- * license that can be found in the LICENSE file.
- */
-
 package sqlite
 
 import (
@@ -11,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/deweppro/go-orm/schema"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/mattn/go-sqlite3" //nolint: golint
 	"github.com/pkg/errors"
 )
 
@@ -21,10 +15,12 @@ var (
 )
 
 type (
+	//Config pool of configs
 	Config struct {
 		Pool []Item `yaml:"sqlite"`
 	}
 
+	//Item config model
 	Item struct {
 		Name string `yaml:"name"`
 		File string `yaml:"file"`
@@ -37,6 +33,7 @@ type (
 	}
 )
 
+//List getting all configs
 func (c *Config) List() (list []schema.ItemInterface) {
 	for _, item := range c.Pool {
 		list = append(list, item)
@@ -44,10 +41,16 @@ func (c *Config) List() (list []schema.ItemInterface) {
 	return
 }
 
-func (i Item) GetName() string               { return i.Name }
-func (i Item) GetDSN() string                { return i.File }
+//GetName getting config name
+func (i Item) GetName() string { return i.Name }
+
+//GetDSN connection params
+func (i Item) GetDSN() string { return i.File }
+
+//Setup setting config conntections params
 func (i Item) Setup(_ schema.SetupInterface) {}
 
+//New init new sqlite connection
 func New(conf schema.ConfigInterface) (schema.Connector, error) {
 	c := &pool{
 		conf: conf,
@@ -57,10 +60,12 @@ func New(conf schema.ConfigInterface) (schema.Connector, error) {
 	return c, c.Reconnect()
 }
 
+//Dialect getting sql dialect
 func (p *pool) Dialect() string {
 	return schema.SQLiteDialect
 }
 
+//Reconnect update connection to database
 func (p *pool) Reconnect() error {
 	if err := p.Close(); err != nil {
 		return err
@@ -82,6 +87,7 @@ func (p *pool) Reconnect() error {
 	return nil
 }
 
+//Close closing connection
 func (p *pool) Close() error {
 	p.l.Lock()
 	defer p.l.Unlock()
@@ -96,6 +102,7 @@ func (p *pool) Close() error {
 	return nil
 }
 
+//Pool getting connection pool by name
 func (p *pool) Pool(name string) (*sql.DB, error) {
 	p.l.RLock()
 	defer p.l.RUnlock()

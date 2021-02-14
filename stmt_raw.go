@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2020 Mikhail Knyazhev <markus621@gmail.com>.
- * All rights reserved. Use of this source code is governed by a BSD-style
- * license that can be found in the LICENSE file.
- */
-
 package orm
 
 import (
@@ -12,6 +6,7 @@ import (
 	"errors"
 )
 
+//Call basic query execution
 func (s *Stmt) Call(name string, fn func(*sql.Conn, context.Context) error) error {
 	ctx, cncl := context.WithCancel(context.Background())
 	defer cncl()
@@ -37,6 +32,7 @@ func (s *Stmt) Call(name string, fn func(*sql.Conn, context.Context) error) erro
 	return err
 }
 
+//Tx the basic execution of a query in a transaction
 func (s *Stmt) Tx(name string, fn func(*sql.Tx, context.Context) error) error {
 	return s.Call(name, func(conn *sql.Conn, ctx context.Context) error {
 		tx, err := conn.BeginTx(ctx, nil)
