@@ -23,7 +23,7 @@ func (s *Stmt) Call(name string, fn func(*sql.Conn, context.Context) error) erro
 
 	defer func() {
 		if er := conn.Close(); er != nil && !errors.Is(er, sql.ErrConnDone) {
-			s.plug.Logger.Error("close connection: %s", er.Error())
+			s.plug.Logger.Errorf("close connection: %s", er.Error())
 		}
 	}()
 
@@ -42,7 +42,7 @@ func (s *Stmt) Tx(name string, fn func(*sql.Tx, context.Context) error) error {
 
 		defer func() {
 			if err := tx.Rollback(); err != nil {
-				s.plug.Logger.Error("tx rollback: %s", err.Error())
+				s.plug.Logger.Errorf("tx rollback: %s", err.Error())
 			}
 		}()
 

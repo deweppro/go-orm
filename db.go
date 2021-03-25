@@ -1,6 +1,7 @@
 package orm
 
 import (
+	"github.com/deweppro/go-logger"
 	"github.com/deweppro/go-orm/plugins"
 	"github.com/deweppro/go-orm/schema"
 )
@@ -9,28 +10,22 @@ type (
 	//DB connection storage
 	DB struct {
 		conn schema.Connector
-		plug *Plugins
+		plug Plugins
 	}
 	//Plugins storage
 	Plugins struct {
-		Logger  plugins.Logger
-		Metrics plugins.Metrics
+		Logger  logger.Logger
+		Metrics plugins.MetricGetter
 	}
 )
 
 //NewDB init database connections
-func NewDB(c schema.Connector, p *Plugins) *DB {
-	plug := &Plugins{
-		Logger:  plugins.StdOutLog,
-		Metrics: plugins.StdOutMetric,
+func NewDB(c schema.Connector, plug Plugins) *DB {
+	if plug.Logger == nil {
+		plug.Logger = plugins.DevNullLog
 	}
-	if p != nil {
-		if p.Metrics != nil {
-			plug.Metrics = p.Metrics
-		}
-		if p.Logger != nil {
-			plug.Logger = p.Logger
-		}
+	if plug.Metrics == nil {
+		plug.Metrics = plugins.DevNullMetric
 	}
 	return &DB{
 		conn: c,

@@ -8,8 +8,8 @@ type (
 	metric struct {
 		metrics MetricWriter
 	}
-	//Metrics interface
-	Metrics interface {
+	//MetricGetter interface
+	MetricGetter interface {
 		ExecutionTime(name string, call func())
 	}
 	//MetricWriter interface
@@ -22,7 +22,7 @@ type (
 var StdOutMetric = NewMetric(StdOutWriter)
 
 //NewMetric init new metric
-func NewMetric(m MetricWriter) Metrics {
+func NewMetric(m MetricWriter) MetricGetter {
 	return &metric{metrics: m}
 }
 
