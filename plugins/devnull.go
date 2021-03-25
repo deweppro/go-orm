@@ -23,3 +23,5 @@ func (devNullLogger) Errorf(string, ...interface{}) {}
 func (devNullLogger) Warnf(string, ...interface{})  {}
 func (devNullLogger) Infof(string, ...interface{})  {}
 func (devNullLogger) Debugf(string, ...interface{}) {}
+func (devNullLogger) SetLevel(v uint32)             {}
+func (devNullLogger) Close()                        {}
