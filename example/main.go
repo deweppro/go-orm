@@ -16,7 +16,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	db := orm.NewDB(conn, &orm.Plugins{Logger: plugins.StdOutLog, Metrics: plugins.StdOutMetric})
+	db := orm.NewDB(conn, orm.Plugins{Logger: plugins.StdOutLog, Metrics: plugins.StdOutMetric})
 	pool := db.Pool("")
 
 	if err = pool.Ping(); err != nil {

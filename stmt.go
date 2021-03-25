@@ -10,7 +10,7 @@ type (
 	Stmt struct {
 		name   string
 		db     dbPool
-		plug   *Plugins
+		plug   Plugins
 		models map[string]ormModel
 	}
 	dbPool interface {
@@ -26,7 +26,7 @@ type (
 )
 
 //newStmt init new statement
-func newStmt(name string, db dbPool, p *Plugins) *Stmt {
+func newStmt(name string, db dbPool, p Plugins) *Stmt {
 	return &Stmt{
 		name: name,
 		db:   db,
