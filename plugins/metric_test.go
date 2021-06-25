@@ -12,14 +12,10 @@ func TestNewMetric(t *testing.T) {
 	tl := &stdout{Writer: w}
 
 	demo1 := NewMetric(nil)
-	demo1.ExecutionTime("hello1", func() {
-		return
-	})
+	demo1.ExecutionTime("hello1", func() {})
 
 	demo2 := NewMetric(tl)
-	demo2.ExecutionTime("hello2", func() {
-		return
-	})
+	demo2.ExecutionTime("hello2", func() {})
 
 	result := w.String()
 	require.NotContains(t, result, "hello1")

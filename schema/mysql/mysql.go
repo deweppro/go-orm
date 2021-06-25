@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -76,34 +77,40 @@ func (i Item) Setup(s schema.SetupInterface) {
 
 //GetDSN connection params
 func (i Item) GetDSN() string {
+	params := []string{"autocommit=true"}
+	//---
 	if len(i.Charset) == 0 {
 		i.Charset = "utf8mb4,utf8"
 	}
+	params = append(params, fmt.Sprintf("charset=%s", i.Charset))
+	//---
 	if i.Timeout == 0 {
 		i.Timeout = defaultTimeoutConn
 	}
+	params = append(params, fmt.Sprintf("timeout=%s", i.Timeout))
+	//---
 	if i.ReadTimeout == 0 {
 		i.ReadTimeout = defaultTimeout
 	}
+	params = append(params, fmt.Sprintf("readTimeout=%s", i.ReadTimeout))
+	//---
 	if i.WriteTimeout == 0 {
 		i.WriteTimeout = defaultTimeout
 	}
-	if len(i.TxIsolationLevel) == 0 {
-		i.TxIsolationLevel = "READ-COMMITTED"
+	params = append(params, fmt.Sprintf("writeTimeout=%s", i.WriteTimeout))
+	//---
+	if len(i.TxIsolationLevel) > 0 {
+		params = append(params, fmt.Sprintf("transaction_isolation=%s", i.TxIsolationLevel))
 	}
+	//---
 	if len(i.Timezone) == 0 {
 		i.Timezone = "UTC"
 	}
-	base := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
-		i.User, i.Password, i.Host, i.Port, i.Schema)
-	params := fmt.Sprintf(
-		"charset=%s&autocommit=false&transaction_isolation=%s"+
-			"&timeout=%s&readTimeout=%s&writeTimeout=%s&loc=%s&interpolateParams=%t",
-		i.Charset, i.TxIsolationLevel, i.Timeout, i.ReadTimeout,
-		i.WriteTimeout, i.Timezone, i.InterpolateParams,
-	)
-
-	return base + "?" + params
+	params = append(params, fmt.Sprintf("loc=%s", i.Timezone))
+	//---
+	params = append(params, fmt.Sprintf("interpolateParams=%t", i.InterpolateParams))
+	//---
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s", i.User, i.Password, i.Host, i.Port, i.Schema, strings.Join(params, "&"))
 }
 
 //New init new mysql connection

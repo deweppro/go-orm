@@ -35,5 +35,5 @@ func (m *metric) ExecutionTime(name string, call func()) {
 
 	t := time.Now()
 	call()
-	m.metrics.Metric(name, time.Now().Sub(t))
+	m.metrics.Metric(name, time.Since(t))
 }
