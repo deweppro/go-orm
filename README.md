@@ -37,7 +37,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	err = pool.Call("demo_metric", func(conn *sql.Conn, ctx context.Context) error {
+	err = pool.Call("demo_metric", func(ctx context.Context, conn *sql.DB) error {
 		return nil
 	})
 	if err != nil {
