@@ -8,10 +8,10 @@ import (
 type (
 	//Stmt statement model
 	Stmt struct {
-		name   string
-		db     dbPool
-		plug   Plugins
-		models map[string]ormModel
+		name string
+		db   dbPool
+		plug Plugins
+		// models map[string]ormModel
 	}
 	dbPool interface {
 		Dialect() string
@@ -19,8 +19,8 @@ type (
 	}
 	//StmtInterface statement interface
 	StmtInterface interface {
-		Call(string, func(*sql.Conn, context.Context) error) error
-		Tx(string, func(*sql.Tx, context.Context) error) error
+		Call(string, func(context.Context, *sql.DB) error) error
+		Tx(string, func(context.Context, *sql.Tx) error) error
 		Ping() error
 	}
 )

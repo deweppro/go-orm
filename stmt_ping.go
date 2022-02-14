@@ -7,7 +7,7 @@ import (
 
 //Ping database ping
 func (s *Stmt) Ping() error {
-	return s.Call("ping", func(conn *sql.Conn, ctx context.Context) error {
-		return conn.PingContext(ctx)
+	return s.Call("ping", func(ctx context.Context, db *sql.DB) error {
+		return db.PingContext(ctx)
 	})
 }
