@@ -3,11 +3,10 @@ package orm
 import (
 	"context"
 	"database/sql"
-	"errors"
 )
 
 //Call basic query execution
-func (s *Stmt) Call(name string, fn func(*sql.Conn, context.Context) error) error {
+func (s *Stmt) Call(name string, callFunc func(context.Context, *sql.DB) error) error {
 	ctx, cncl := context.WithCancel(context.Background())
 	defer cncl()
 
@@ -16,26 +15,15 @@ func (s *Stmt) Call(name string, fn func(*sql.Conn, context.Context) error) erro
 		return err
 	}
 
-	conn, err := pool.Conn(ctx)
-	if err != nil {
-		return err
-	}
-
-	defer func() {
-		if er := conn.Close(); er != nil && !errors.Is(er, sql.ErrConnDone) {
-			s.plug.Logger.Errorf("close connection: %s", er.Error())
-		}
-	}()
-
-	s.plug.Metrics.ExecutionTime(name, func() { err = fn(conn, ctx) })
+	s.plug.Metrics.ExecutionTime(name, func() { err = callFunc(ctx, pool) })
 
 	return err
 }
 
 //Tx the basic execution of a query in a transaction
-func (s *Stmt) Tx(name string, fn func(*sql.Tx, context.Context) error) error {
-	return s.Call(name, func(conn *sql.Conn, ctx context.Context) error {
-		tx, err := conn.BeginTx(ctx, nil)
+func (s *Stmt) Tx(name string, callFunc func(context.Context, *sql.Tx) error) error {
+	return s.Call(name, func(ctx context.Context, db *sql.DB) error {
+		tx, err := db.BeginTx(ctx, nil)
 		if err != nil {
 			return err
 		}
@@ -46,6 +34,6 @@ func (s *Stmt) Tx(name string, fn func(*sql.Tx, context.Context) error) error {
 			}
 		}()
 
-		return fn(tx, ctx)
+		return callFunc(ctx, tx)
 	})
 }
