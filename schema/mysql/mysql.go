@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/deweppro/go-errors"
 	"github.com/deweppro/go-orm/schema"
 	_ "github.com/go-sql-driver/mysql" //nolint: golint
-	"github.com/pkg/errors"
 )
 
 const (
@@ -141,7 +141,7 @@ func (p *pool) Reconnect() error {
 		db, err := sql.Open("mysql", item.GetDSN())
 		if err != nil {
 			if er := p.Close(); er != nil {
-				return errors.Wrap(err, er.Error())
+				return errors.Wrap(err, er)
 			}
 			return err
 		}

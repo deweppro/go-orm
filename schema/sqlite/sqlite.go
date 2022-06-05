@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"sync"
 
+	"github.com/deweppro/go-errors"
 	"github.com/deweppro/go-orm/schema"
 	_ "github.com/mattn/go-sqlite3" //nolint: golint
-	"github.com/pkg/errors"
 )
 
 var (
@@ -78,7 +78,7 @@ func (p *pool) Reconnect() error {
 		db, err := sql.Open("sqlite3", item.GetDSN())
 		if err != nil {
 			if er := p.Close(); er != nil {
-				return errors.Wrap(err, er.Error())
+				return errors.Wrap(err, er)
 			}
 			return err
 		}
