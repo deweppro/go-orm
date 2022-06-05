@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/pkg/errors"
+	"github.com/deweppro/go-errors"
 )
 
 //nolint: golint
