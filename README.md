@@ -25,7 +25,8 @@ import (
 
 func main() {
 
-	conn, err := mysql.New(&mysql.Config{Pool: []mysql.Item{}})
+	conn := mysql.New(&mysql.Config{Pool: []mysql.Item{}})
+	err := conn.Reconnect()
 	if err != nil {
 		panic(err.Error())
 	}

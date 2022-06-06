@@ -114,13 +114,13 @@ func (i Item) GetDSN() string {
 }
 
 //New init new mysql connection
-func New(conf schema.ConfigInterface) (schema.Connector, error) {
+func New(conf schema.ConfigInterface) schema.Connector {
 	c := &pool{
 		conf: conf,
 		db:   make(map[string]*sql.DB),
 	}
 
-	return c, c.Reconnect()
+	return c
 }
 
 //Dialect getting sql dialect
