@@ -34,6 +34,6 @@ func NewDB(c schema.Connector, plug Plugins) *DB {
 }
 
 //Pool getting pool connections by name
-func (d *DB) Pool(name string) StmtInterface {
+func (d *DB) Pool(name string) *Stmt {
 	return newStmt(name, d.conn, d.plug)
 }

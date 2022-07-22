@@ -3,13 +3,19 @@ package orm
 import (
 	"context"
 	"database/sql"
+
+	"github.com/deweppro/go-errors"
 )
 
-//Call basic query execution
-func (s *Stmt) Call(name string, callFunc func(context.Context, *sql.DB) error) error {
-	ctx, cncl := context.WithCancel(context.Background())
-	defer cncl()
+//Ping database ping
+func (s *Stmt) Ping() error {
+	return s.CallContext("ping", context.Background(), func(ctx context.Context, db *sql.DB) error {
+		return db.PingContext(ctx)
+	})
+}
 
+//CallContext basic query execution
+func (s *Stmt) CallContext(name string, ctx context.Context, callFunc func(context.Context, *sql.DB) error) error {
 	pool, err := s.db.Pool(s.name)
 	if err != nil {
 		return err
@@ -20,20 +26,22 @@ func (s *Stmt) Call(name string, callFunc func(context.Context, *sql.DB) error) 
 	return err
 }
 
-//Tx the basic execution of a query in a transaction
-func (s *Stmt) Tx(name string, callFunc func(context.Context, *sql.Tx) error) error {
-	return s.Call(name, func(ctx context.Context, db *sql.DB) error {
-		tx, err := db.BeginTx(ctx, nil)
+//TxContext the basic execution of a query in a transaction
+func (s *Stmt) TxContext(name string, ctx context.Context, callFunc func(context.Context, *sql.Tx) error) error {
+	return s.CallContext(name, ctx, func(ctx context.Context, db *sql.DB) error {
+		dbx, err := db.BeginTx(ctx, nil)
 		if err != nil {
 			return err
 		}
 
-		defer func() {
-			if err := tx.Rollback(); err != nil {
-				s.plug.Logger.Errorf("tx rollback: %s", err.Error())
-			}
-		}()
+		err = callFunc(ctx, dbx)
+		if err != nil {
+			return errors.Wrap(
+				errors.WrapMessage(err, "execute tx"),
+				errors.WrapMessage(dbx.Rollback(), "rollback tx"),
+			)
+		}
 
-		return callFunc(ctx, tx)
+		return dbx.Commit()
 	})
 }

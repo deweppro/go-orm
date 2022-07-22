@@ -1,7 +1,6 @@
 package orm
 
 import (
-	"context"
 	"database/sql"
 )
 
@@ -16,12 +15,6 @@ type (
 	dbPool interface {
 		Dialect() string
 		Pool(string) (*sql.DB, error)
-	}
-	//StmtInterface statement interface
-	StmtInterface interface {
-		Call(string, func(context.Context, *sql.DB) error) error
-		Tx(string, func(context.Context, *sql.Tx) error) error
-		Ping() error
 	}
 )
 
