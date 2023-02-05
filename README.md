@@ -1,9 +1,6 @@
 # go-orm
 
-[![Coverage Status](https://coveralls.io/repos/github/deweppro/go-orm/badge.svg?branch=master)](https://coveralls.io/github/deweppro/go-orm?branch=master)
-[![Release](https://img.shields.io/github/release/deweppro/go-orm.svg?style=flat-square)](https://github.com/deweppro/go-orm/releases/latest)
-[![Go Report Card](https://goreportcard.com/badge/github.com/deweppro/go-orm)](https://goreportcard.com/report/github.com/deweppro/go-orm)
-[![Build Status](https://travis-ci.com/deweppro/go-orm.svg?branch=master)](https://travis-ci.com/deweppro/go-orm)
+## Deprecated. Use https://github.com/deweppro/go-sdk
 
 # Examples
 
